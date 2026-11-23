@@ -1,0 +1,508 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#06060d">
+<title>Myth or Truth? Science Quiz | PrimeGlitch</title>
+<meta name="description" content="Free science quiz: 10 mind-blowing claims about space, the ocean, animals and history. Myth or truth? Every answer comes with a real source.">
+<meta property="og:title" content="Myth or Truth? Can you get 10/10?">
+<meta property="og:description" content="10 mind-blowing science claims. 12 seconds each. Every answer has a real source.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="logo.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #06060d; --glass: rgba(18, 20, 36, .58); --stroke: rgba(255, 255, 255, .10);
+    --text: #f5f6ff; --muted: #a3a8c7; --cyan: #22e3f2; --pink: #ff3fb4; --violet: #8b5cff;
+    --green: #2ee88a; --red: #ff4766; --yellow: #ffd52a;
+    --grad: linear-gradient(100deg, var(--cyan), var(--violet) 55%, var(--pink));
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+  html, body { height: 100%; background: var(--bg); color: var(--text); font-family: "Space Grotesk", system-ui, sans-serif; }
+  body { overflow-x: hidden; }
+
+  /* ---------- living background ---------- */
+  .bg { position: fixed; inset: 0; z-index: 0; overflow: hidden; }
+  .bg .photo { position: absolute; inset: -40px; background-size: cover; background-position: center; opacity: 0; transform: scale(1.1);
+               transition: opacity .8s ease, transform 8s ease; filter: saturate(1.3) brightness(.55); }
+  .bg .photo.on { opacity: 1; transform: scale(1.0); }
+  .blob { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(90px); opacity: .45; mix-blend-mode: screen; }
+  .b1 { background: var(--violet); top: -25vmax; left: -15vmax; animation: drift 18s ease-in-out infinite alternate; }
+  .b2 { background: var(--pink); bottom: -30vmax; right: -20vmax; animation: drift 22s ease-in-out infinite alternate-reverse; }
+  .b3 { background: var(--cyan); top: 30%; left: 40%; width: 35vmax; height: 35vmax; opacity: .25; animation: drift 26s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(8vmax, 6vmax) scale(1.15); } }
+  .grain { position: absolute; inset: 0; opacity: .07; pointer-events: none;
+           background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at center, transparent 30%, rgba(6, 6, 13, .85) 100%); }
+
+  /* ---------- layout ---------- */
+  .app { position: relative; z-index: 1; min-height: 100%; max-width: 480px; margin: 0 auto;
+         padding: max(16px, env(safe-area-inset-top)) 16px max(20px, env(safe-area-inset-bottom));
+         display: flex; flex-direction: column; gap: 14px; }
+  header { display: flex; align-items: center; justify-content: space-between; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 700; letter-spacing: .3px; text-decoration: none; color: var(--text); }
+  .brand img { width: 34px; height: 34px; border-radius: 50%; box-shadow: 0 0 18px rgba(34, 227, 242, .45); }
+  .pill { font-size: 13px; padding: 6px 12px; border-radius: 999px; background: var(--glass); border: 1px solid var(--stroke); backdrop-filter: blur(12px); color: var(--muted); }
+  .pill b { color: var(--text); }
+
+  .glass { background: var(--glass); border: 1px solid var(--stroke); border-radius: 28px;
+           backdrop-filter: blur(22px) saturate(1.4); -webkit-backdrop-filter: blur(22px) saturate(1.4);
+           box-shadow: 0 30px 80px rgba(0, 0, 0, .45), inset 0 1px 0 rgba(255, 255, 255, .08); }
+  .screen { display: none; flex-direction: column; gap: 14px; flex: 1; }
+  .screen.on { display: flex; animation: rise .45s cubic-bezier(.2, .8, .2, 1); }
+  @keyframes rise { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
+
+  /* ---------- start ---------- */
+  .hero { padding: 30px 24px; text-align: center; }
+  .kicker { display: inline-block; font-size: 12px; letter-spacing: 3px; text-transform: uppercase; color: var(--yellow); margin-bottom: 14px; }
+  h1 { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: clamp(54px, 17vw, 84px); line-height: .92; text-transform: uppercase; }
+  h1 .m { color: var(--pink); text-shadow: 0 0 30px rgba(255, 63, 180, .6); }
+  h1 .t { color: var(--cyan); text-shadow: 0 0 30px rgba(34, 227, 242, .6); }
+  h1 .or { display: block; font-size: .42em; color: var(--muted); margin: 6px 0; letter-spacing: 6px; }
+  .lead { color: var(--muted); margin: 18px auto 24px; line-height: 1.55; max-width: 340px; }
+  .feats { display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; margin-bottom: 26px; }
+  .feats span { font-size: 13px; padding: 7px 12px; border-radius: 999px; border: 1px solid var(--stroke); background: rgba(255, 255, 255, .04); }
+
+  .btn { position: relative; display: flex; align-items: center; justify-content: center; gap: 8px; width: 100%; border: 0; border-radius: 18px;
+         padding: 17px; cursor: pointer; font: 700 17px "Space Grotesk", sans-serif; color: var(--text); text-decoration: none;
+         transition: transform .12s ease, box-shadow .2s ease, filter .2s; }
+  .btn:active { transform: scale(.97); }
+  .cta { background: var(--grad); color: #07070f; box-shadow: 0 12px 40px rgba(139, 92, 255, .45); background-size: 200% 100%; animation: shine 4s linear infinite; }
+  @keyframes shine { to { background-position: -200% 0; } }
+  .soft { background: rgba(255, 255, 255, .06); border: 1px solid var(--stroke); }
+  .yt { background: #ff1f3d; box-shadow: 0 10px 30px rgba(255, 31, 61, .35); }
+  .hint { text-align: center; color: var(--muted); font-size: 12px; margin-top: 12px; }
+
+  /* ---------- quiz ---------- */
+  .top { display: flex; align-items: center; gap: 12px; }
+  .dots { display: flex; gap: 5px; flex: 1; }
+  .dots i { flex: 1; height: 6px; border-radius: 6px; background: rgba(255, 255, 255, .12); transition: background .3s, box-shadow .3s; }
+  .dots i.now { background: rgba(255, 255, 255, .55); }
+  .dots i.ok { background: var(--green); box-shadow: 0 0 10px var(--green); }
+  .dots i.no { background: var(--red); box-shadow: 0 0 10px var(--red); }
+  .streak { font-weight: 700; font-size: 14px; min-width: 52px; text-align: right; transition: transform .2s; }
+  .streak.bump { transform: scale(1.35); }
+
+  .stage { position: relative; flex: 1; display: flex; flex-direction: column; min-height: 380px; }
+  .card { position: relative; padding: 26px 22px 22px; display: flex; flex-direction: column; flex: 1; touch-action: pan-y; user-select: none;
+          transition: transform .35s cubic-bezier(.2, .8, .2, 1), box-shadow .3s, border-color .3s; will-change: transform; }
+  .card.ok { border-color: rgba(46, 232, 138, .7); box-shadow: 0 0 0 1px rgba(46, 232, 138, .4), 0 0 60px rgba(46, 232, 138, .25); }
+  .card.no { border-color: rgba(255, 71, 102, .7); box-shadow: 0 0 0 1px rgba(255, 71, 102, .4), 0 0 60px rgba(255, 71, 102, .25); animation: shake .4s; }
+  @keyframes shake { 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
+  .meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+  .tag { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--yellow); font-weight: 700; }
+  .ring { position: relative; width: 44px; height: 44px; }
+  .ring svg { transform: rotate(-90deg); }
+  .ring circle { fill: none; stroke-width: 4; }
+  .ring .track { stroke: rgba(255, 255, 255, .12); }
+  .ring .fill { stroke: var(--cyan); stroke-linecap: round; stroke-dasharray: 113; transition: stroke .3s; }
+  .ring span { position: absolute; inset: 0; display: grid; place-items: center; font-weight: 700; font-size: 14px; }
+  .ring.low .fill { stroke: var(--red); }
+  .qn { color: var(--muted); font-size: 13px; margin-bottom: 8px; }
+  .claim { font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: clamp(28px, 8.2vw, 38px); line-height: 1.12; letter-spacing: .3px; }
+
+  .stamp { position: absolute; top: 26px; font-family: Anton, Impact, sans-serif; font-size: 34px; padding: 4px 14px; border: 4px solid; border-radius: 12px;
+           opacity: 0; pointer-events: none; letter-spacing: 2px; }
+  .stamp.l { left: 18px; color: var(--pink); border-color: var(--pink); transform: rotate(-14deg); }
+  .stamp.r { right: 18px; color: var(--cyan); border-color: var(--cyan); transform: rotate(14deg); }
+
+  .answer { display: none; margin-top: 18px; padding-top: 16px; border-top: 1px solid var(--stroke); }
+  .answer.on { display: block; animation: rise .35s ease; }
+  .verdict { font-family: Anton, Impact, sans-serif; font-size: 30px; letter-spacing: 1px; }
+  .verdict.ok { color: var(--green); } .verdict.no { color: var(--red); }
+  .why { margin: 8px 0 12px; line-height: 1.55; color: #dfe2f5; }
+  .src { font-size: 13px; color: var(--muted); }
+  .src a { color: var(--cyan); text-decoration: none; border-bottom: 1px dashed rgba(34, 227, 242, .5); }
+
+  .choices { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .choice { flex-direction: column; gap: 0; font-family: Anton, Impact, sans-serif; font-weight: 400; font-size: 26px; letter-spacing: 2px; padding: 16px 10px; }
+  .choice small { display: block; font: 500 11px "Space Grotesk", sans-serif; letter-spacing: 1px; opacity: .7; margin-top: 2px; }
+  .choice.myth { background: linear-gradient(160deg, #ff5fc4, #d61f8a); box-shadow: 0 10px 30px rgba(255, 63, 180, .35); }
+  .choice.truth { background: linear-gradient(160deg, #3cf0ff, #0aa9c9); color: #031318; box-shadow: 0 10px 30px rgba(34, 227, 242, .35); }
+  .choice[disabled] { opacity: .3; cursor: default; box-shadow: none; }
+  .choice.picked { opacity: 1; outline: 3px solid #fff; outline-offset: 2px; }
+  .nextbtn { display: none; } .nextbtn.on { display: flex; animation: rise .3s ease; }
+
+  /* ---------- result ---------- */
+  .result { padding: 28px 22px; text-align: center; }
+  .scorewrap { position: relative; width: 190px; height: 190px; margin: 4px auto 10px; }
+  .scorewrap svg { transform: rotate(-90deg); }
+  .scorewrap circle { fill: none; stroke-width: 12; }
+  .scorewrap .track { stroke: rgba(255, 255, 255, .08); }
+  .scorewrap .fill { stroke: url(#g); stroke-linecap: round; stroke-dasharray: 534; stroke-dashoffset: 534; transition: stroke-dashoffset 1.4s cubic-bezier(.2, .8, .2, 1); }
+  .scorenum { position: absolute; inset: 0; display: grid; place-items: center; font-family: Anton, Impact, sans-serif; font-size: 64px; }
+  .scorenum small { font-size: 26px; color: var(--muted); }
+  .rank { font-size: 24px; font-weight: 700; margin-top: 6px; }
+  .rank-sub { color: var(--muted); margin: 6px 0 4px; }
+  .best { font-size: 13px; color: var(--yellow); min-height: 18px; margin-bottom: 18px; }
+  .label { font-size: 12px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin: 18px 0 10px; text-align: left; }
+  .share { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .soc { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-top: 14px; }
+  .soc.four { grid-template-columns: repeat(4, 1fr); }
+  .ico { display: flex; flex-direction: column; align-items: center; gap: 6px; background: none; border: 0; cursor: pointer;
+         color: var(--muted); font: 500 11px "Space Grotesk", sans-serif; text-decoration: none; transition: transform .12s; }
+  .ico:active { transform: scale(.92); }
+  .ico i { display: grid; place-items: center; width: 52px; height: 52px; border-radius: 16px; box-shadow: 0 8px 22px rgba(0, 0, 0, .35); transition: transform .2s, box-shadow .2s; }
+  .ico:hover i { transform: translateY(-3px); }
+  .ico svg { width: 26px; height: 26px; fill: #fff; }
+  .wa { background: #25d366; } .tg { background: #229ed9; } .fb { background: #1877f2; }
+  .x { background: #000; border: 1px solid rgba(255, 255, 255, .25); }
+  .cp { background: rgba(255, 255, 255, .12); border: 1px solid var(--stroke); }
+  .ig { background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fd5949 45%, #d6249f 60%, #285aeb 90%); }
+  .tt { background: #000; border: 1px solid rgba(255, 255, 255, .25); }
+  .tt svg { filter: drop-shadow(-2px -1px 0 #25f4ee) drop-shadow(2px 1px 0 #fe2c55); }
+  .yt svg { flex: 0 0 auto; }
+  .stack { display: flex; flex-direction: column; gap: 10px; }
+  .review { text-align: left; display: flex; flex-direction: column; gap: 8px; }
+  .review div { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.4; padding: 10px 12px; border-radius: 14px; background: rgba(255, 255, 255, .04); border: 1px solid var(--stroke); }
+  .review b { flex: 0 0 auto; }
+  .review em { font-style: normal; color: var(--muted); font-size: 12px; display: block; }
+
+  footer { text-align: center; color: var(--muted); font-size: 12px; line-height: 1.6; padding-top: 6px; }
+  footer a { color: var(--muted); }
+  canvas#fx { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+</style>
+</head>
+<body>
+<div class="bg">
+  <div class="photo" id="ph1"></div><div class="photo" id="ph2"></div>
+  <div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div>
+  <div class="vignette"></div><div class="grain"></div>
+</div>
+<canvas id="fx"></canvas>
+
+<main class="app">
+  <header>
+    <a class="brand" href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener"><img src="logo.png" alt="">PrimeGlitch</a>
+    <span class="pill" id="pillBest">Best: <b>–</b></span>
+  </header>
+
+  <!-- START -->
+  <section class="screen on" id="sStart">
+    <div class="glass hero">
+      <span class="kicker">Science quiz · 2 min</span>
+      <h1><span class="m">Myth</span><span class="or">or</span><span class="t">Truth?</span></h1>
+      <p class="lead">10 claims about space, the ocean, animals and history. Some are real. Some are famous myths. Most people score under 7.</p>
+      <div class="feats"><span>⏱ 12 sec each</span><span>🔥 Streaks</span><span>📚 Real sources</span></div>
+      <button class="btn cta" id="go">Start the quiz →</button>
+      <p class="hint">Tip: swipe the card ← myth · truth → or use arrow keys</p>
+    </div>
+  </section>
+
+  <!-- QUIZ -->
+  <section class="screen" id="sQuiz">
+    <div class="top"><div class="dots" id="dots"></div><div class="streak" id="streak"></div></div>
+    <div class="stage">
+      <article class="glass card" id="card">
+        <span class="stamp l" id="stL">MYTH</span><span class="stamp r" id="stR">TRUTH</span>
+        <div class="meta">
+          <span class="tag" id="tag"></span>
+          <div class="ring" id="ring"><svg width="44" height="44"><circle class="track" cx="22" cy="22" r="18"/><circle class="fill" id="ringFill" cx="22" cy="22" r="18"/></svg><span id="sec">12</span></div>
+        </div>
+        <p class="qn" id="qn"></p>
+        <p class="claim" id="claim"></p>
+        <div class="answer" id="answer">
+          <div class="verdict" id="verdict"></div>
+          <p class="why" id="why"></p>
+          <p class="src">Source: <a id="src" target="_blank" rel="noopener"></a></p>
+        </div>
+      </article>
+    </div>
+    <div class="choices" id="choices">
+      <button class="btn choice myth" id="bMyth">MYTH<small>← swipe left</small></button>
+      <button class="btn choice truth" id="bTruth">TRUTH<small>swipe right →</small></button>
+    </div>
+    <button class="btn cta nextbtn" id="next">Next →</button>
+  </section>
+
+  <!-- RESULT -->
+  <section class="screen" id="sResult">
+    <div class="glass result">
+      <div class="scorewrap">
+        <svg width="190" height="190"><defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#22e3f2"/><stop offset=".55" stop-color="#8b5cff"/><stop offset="1" stop-color="#ff3fb4"/></linearGradient></defs>
+          <circle class="track" cx="95" cy="95" r="85"/><circle class="fill" id="scoreFill" cx="95" cy="95" r="85"/></svg>
+        <div class="scorenum"><div><span id="scoreNum">0</span><small>/10</small></div></div>
+      </div>
+      <p class="rank" id="rank"></p>
+      <p class="rank-sub" id="rankSub"></p>
+      <p class="best" id="bestMsg"></p>
+
+      <div class="stack">
+        <button class="btn cta" id="shareMain">Challenge a friend</button>
+      </div>
+      <div class="soc">
+        <a class="ico" id="shWa" target="_blank" rel="noopener"><i class="wa"><svg viewBox="0 0 24 24"><path d="M12 0a12 12 0 0 0-10.4 18L0 24l6.2-1.6A12 12 0 1 0 12 0zm0 21.8a9.8 9.8 0 0 1-5-1.4l-.4-.2-3.7 1 1-3.6-.2-.4A9.8 9.8 0 1 1 12 21.8zm5.4-7.3c-.3-.1-1.8-.9-2-1s-.5-.1-.7.1-.8 1-.9 1.2-.3.2-.6.1a8 8 0 0 1-4-3.5c-.3-.5.3-.5.9-1.6.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6a1.1 1.1 0 0 0-.8.4 3.4 3.4 0 0 0-1 2.5 5.9 5.9 0 0 0 1.2 3.1 13.5 13.5 0 0 0 5.2 4.6c1.9.8 2.7.9 3.6.7a3.1 3.1 0 0 0 2-1.4 2.5 2.5 0 0 0 .2-1.4c-.1-.2-.3-.3-.6-.4z"/></svg></i>WhatsApp</a>
+        <a class="ico" id="shTg" target="_blank" rel="noopener"><i class="tg"><svg viewBox="0 0 24 24"><path d="M12 0a12 12 0 1 0 0 24 12 12 0 0 0 0-24zm5.9 8.2-2 9.4c-.1.7-.5.8-1.1.5l-3-2.2-1.5 1.4c-.2.2-.3.3-.6.3l.2-3.1 5.6-5c.2-.2 0-.3-.4-.1l-6.9 4.3-3-.9c-.6-.2-.7-.6.1-1l11.6-4.5c.6-.2 1 .1 1 .9z"/></svg></i>Telegram</a>
+        <a class="ico" id="shX" target="_blank" rel="noopener"><i class="x"><svg viewBox="0 0 24 24"><path d="M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9zm-1.3 19.4h2L6.5 3.2H4.3l13.3 17.4z"/></svg></i>X</a>
+        <a class="ico" id="shFb" target="_blank" rel="noopener"><i class="fb"><svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg></i>Facebook</a>
+        <button class="ico" id="shCopy"><i class="cp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></i><span>Copy link</span></button>
+      </div>
+
+      <p class="label">A new mind-blowing fact every day</p>
+      <div class="stack">
+        <a class="btn yt" href="https://www.youtube.com/@PrimeGlitchLab?sub_confirmation=1" target="_blank" rel="noopener"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>Subscribe on YouTube</a>
+      </div>
+      <div class="soc four">
+        <a class="ico" href="https://www.instagram.com/primeglitchlab" target="_blank" rel="noopener"><i class="ig"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.5"/><circle cx="12" cy="12" r="4.3"/><circle cx="17.6" cy="6.4" r="1.2" fill="#fff" stroke="none"/></svg></i>Instagram</a>
+        <a class="ico" href="https://www.tiktok.com/@primeglitchlab" target="_blank" rel="noopener"><i class="tt"><svg viewBox="0 0 24 24"><path d="M16.6 2h-3.4v13.4a2.9 2.9 0 1 1-2-2.8V9.1a6.4 6.4 0 1 0 5.4 6.3V8.6a7.9 7.9 0 0 0 4.6 1.5V6.7A4.6 4.6 0 0 1 16.6 2z"/></svg></i>TikTok</a>
+        <a class="ico" href="https://x.com/PrimeGlitchLab" target="_blank" rel="noopener"><i class="x"><svg viewBox="0 0 24 24"><path d="M18.9 1.2h3.7l-8 9.2L24 22.8h-7.4l-5.8-7.6-6.6 7.6H.5l8.6-9.8L0 1.2h7.6l5.2 6.9 6.1-6.9zm-1.3 19.4h2L6.5 3.2H4.3l13.3 17.4z"/></svg></i>X</a>
+        <a class="ico" href="https://www.facebook.com/profile.php?id=61596769414656" target="_blank" rel="noopener"><i class="fb"><svg viewBox="0 0 24 24"><path d="M24 12.07C24 5.41 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.8-4.7 4.54-4.7 1.31 0 2.68.24 2.68.24v2.97h-1.5c-1.5 0-1.96.93-1.96 1.89v2.26h3.33l-.53 3.5h-2.8V24C19.62 23.1 24 18.1 24 12.07z"/></svg></i>Facebook</a>
+      </div>
+      <div class="stack" style="margin-top:14px">
+        <button class="btn soft" id="again">↻ Play again (new questions)</button>
+      </div>
+
+      <p class="label">Your answers</p>
+      <div class="review" id="review"></div>
+    </div>
+  </section>
+
+  <footer>Made by <a href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener">PrimeGlitch</a> · every fact is checked against the source linked under it</footer>
+</main>
+
+<script>
+// truth: true = the claim is TRUE, false = it is a MYTH
+const Q = [
+  { img: "04", tag: "Space", truth: true,
+    text: "In 1977 a radio signal from space lasted 72 seconds and has never been detected again.",
+    why: "The “Wow! signal” hit Ohio's Big Ear telescope. Astronomers have searched that spot again and again and found nothing. Nobody knows what it was.",
+    src: "SETI Institute", url: "https://www.seti.org/wow-signal" },
+  { img: "07", tag: "Animals", truth: false,
+    text: "Goldfish forget everything after 3 seconds.",
+    why: "Experiments show goldfish learn feeding times and remember things for at least 3 months.",
+    src: "Live Science", url: "https://www.livescience.com/goldfish-memory.html" },
+  { img: "03", tag: "Ocean", truth: true,
+    text: "Some Greenland sharks alive today may be about 400 years old.",
+    why: "In 2016 scientists dated the eye lenses of 28 sharks. The oldest was about 400 years old, and at least 272. That's the oldest known animal with a backbone.",
+    src: "Nielsen et al., Science (2016)", url: "https://pubmed.ncbi.nlm.nih.gov/27516602/" },
+  { img: "09", tag: "Ocean", truth: false,
+    text: "Ships vanish in the Bermuda Triangle more often than in other busy seas.",
+    why: "NOAA says there's no evidence of that. Storms, hurricanes and the fast-changing Gulf Stream explain most losses.",
+    src: "NOAA", url: "https://oceanservice.noaa.gov/facts/bermudatri.html" },
+  { img: "13", tag: "Ocean", truth: true,
+    text: "A tiny jellyfish can turn back into its baby form and start life again.",
+    why: "When it's hurt or starving, Turritopsis dohrnii turns back into a polyp, its young form. In the lab, colonies did it up to 10 times.",
+    src: "Natural History Museum", url: "https://nhm.ac.uk/discover/immortal-jellyfish-secret-to-cheating-death.html" },
+  { img: "15", tag: "Human body", truth: false,
+    text: "Bacteria in your body outnumber your own cells 10 to 1.",
+    why: "That old number came from a 1972 guess. A 2016 recount found it's close to 1 to 1: about 38 trillion bacteria and 30 trillion human cells.",
+    src: "PLOS Biology (2016)", url: "https://journals.plos.org/plosbiology/article?id=10.1371/journal.pbio.1002533" },
+  { img: "16", tag: "Tech", truth: true,
+    text: "Without Einstein's relativity, GPS would drift by about 10 kilometers every day.",
+    why: "Satellite clocks gain about 38 millionths of a second a day. Engineers correct for it before launch, or your map would be useless.",
+    src: "Ohio State University", url: "https://www.astronomy.ohio-state.edu/pogge.1/Ast162/Unit5/gps.html" },
+  { img: "18", tag: "Nature", truth: false,
+    text: "Strawberries are true berries.",
+    why: "Botanically, bananas and even pumpkins are berries, but strawberries aren't. Each speck on the outside is its own tiny fruit.",
+    src: "McGill Office for Science and Society", url: "https://www.mcgill.ca/oss/node/6843" },
+  { img: "19", tag: "History", truth: false,
+    text: "Cleopatra lived closer in time to the building of the Great Pyramid than to the Moon landing.",
+    why: "The Great Pyramid was about 2,500 years old when she died. The Moon landing came only about 2,000 years after her.",
+    src: "National Geographic Education", url: "https://education.nationalgeographic.org/resource/key-figures-ancient-egypt/" },
+  { img: "20", tag: "History", truth: true,
+    text: "In 1932 Australia's army fought emus with machine guns, and lost.",
+    why: "About 20,000 emus raided wheat farms. Soldiers came twice with machine guns, and the mission was called off.",
+    src: "National Geographic", url: "https://www.nationalgeographic.com/history/article/australian-emu-war-history" },
+  { img: "21", tag: "Earth", truth: false,
+    text: "Measured from base to peak, Mount Everest is the tallest mountain on Earth.",
+    why: "Everest is the highest above sea level. But Hawaii's Mauna Kea is over 10,200 meters from its base on the sea floor, more than a kilometer taller.",
+    src: "NOAA", url: "https://oceanservice.noaa.gov/facts/highestpoint.html" },
+  { img: "22", tag: "Animals", truth: true,
+    text: "Wombats poop cubes.",
+    why: "Stiff and stretchy parts of a wombat's intestine press its drying poop into flat sides and corners. The research won a 2019 Ig Nobel Prize.",
+    src: "Phys.org", url: "https://phys.org/news/2021-02-wombats-excrete-poop-cubes.html" },
+  { img: "14", tag: "Human body", truth: true,
+    text: "Each of your eyes has a blind spot that your brain hides from you.",
+    why: "There are no light sensors where the optic nerve leaves the eye. Your brain fills the gap with what's around it.",
+    src: "UCLA Health", url: "https://www.uclahealth.org/eye/blind-spots" },
+  { img: "32", tag: "Games", truth: true,
+    text: "Minecraft's Creeper started as a broken pig model.",
+    why: "Notch typed the pig in code and mixed up the numbers. It came out tall instead of long, looked creepy, and became a monster.",
+    src: "Minecraft.net", url: "https://www.minecraft.net/en-us/article/meet-creeper" },
+  { img: "11", tag: "Space", truth: true,
+    text: "NASA's Perseverance rover drove itself for most of its record-breaking trip on Mars.",
+    why: "It drove over 28 miles, more than any vehicle on another world, and planned its own path for over 90% of the way.",
+    src: "NASA Science", url: "https://science.nasa.gov/blogs/perseverance-mars-rover/2026/10/12/nasas-perseverance-sets-off-world-record-for-total-distance-driven/" },
+  { img: "06", tag: "Tech", truth: true,
+    text: "The creators of an AI won a Nobel Prize.",
+    why: "AlphaFold predicted the shapes of almost all 200 million known proteins. Two of its creators shared the 2024 Nobel Prize in Chemistry.",
+    src: "Nobel Prize", url: "https://www.nobelprize.org/prizes/chemistry/2024/press-release/" },
+  { img: "25", tag: "Money", truth: false,
+    text: "Making one US penny costs less than one cent.",
+    why: "In fiscal 2024 each penny cost 3.69 cents to make. The US struck its last circulation penny in November 2025.",
+    src: "NBC News", url: "https://www.nbcnews.com/news/us-news/penny-out-of-circulation-mint-rcna243486" },
+];
+
+const N = 10, SECS = 12, $ = id => document.getElementById(id);
+let round = [], i = 0, score = 0, streak = 0, bestStreak = 0, picks = [], locked = false, timer = null, left = SECS, photoFlip = false;
+
+const store = {
+  get(k) { try { return localStorage.getItem(k); } catch (e) { return null; } },
+  set(k, v) { try { localStorage.setItem(k, v); } catch (e) {} },
+};
+function paintBest() { const b = store.get("pg_best"); $("pillBest").innerHTML = `Best: <b>${b === null ? "–" : b + "/10"}</b>`; }
+paintBest();
+
+Q.forEach(q => { const im = new Image(); im.src = `bg${q.img}.webp`; });   // preload backgrounds
+function setPhoto(name) {
+  const a = $(photoFlip ? "ph1" : "ph2"), b = $(photoFlip ? "ph2" : "ph1");
+  a.style.backgroundImage = `url(bg${name}.webp)`; a.classList.add("on"); b.classList.remove("on"); photoFlip = !photoFlip;
+}
+function shuffle(a) { for (let k = a.length - 1; k > 0; k--) { const j = Math.floor(Math.random() * (k + 1)); [a[k], a[j]] = [a[j], a[k]]; } return a; }
+function show(id) { ["sStart", "sQuiz", "sResult"].forEach(s => $(s).classList.toggle("on", s === id)); window.scrollTo({ top: 0 }); }
+function buzz(p) { if (navigator.vibrate && navigator.userActivation?.hasBeenActive) navigator.vibrate(p); }
+
+function start() {
+  round = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; streak = 0; bestStreak = 0; picks = [];
+  $("dots").innerHTML = "<i></i>".repeat(N);
+  show("sQuiz"); render();
+}
+
+function render() {
+  const q = round[i]; locked = false;
+  setPhoto(q.img);
+  [...$("dots").children].forEach((d, k) => d.classList.toggle("now", k === i));
+  $("tag").textContent = q.tag;
+  $("qn").textContent = `Question ${i + 1} of ${N}`;
+  $("claim").textContent = q.text;
+  $("answer").classList.remove("on");
+  $("card").className = "glass card"; $("card").style.transform = "";
+  $("stL").style.opacity = $("stR").style.opacity = 0;
+  $("choices").style.display = ""; $("next").classList.remove("on");
+  [$("bMyth"), $("bTruth")].forEach(b => { b.disabled = false; b.classList.remove("picked"); });
+  paintStreak();
+  startTimer();
+}
+
+function startTimer() {
+  clearInterval(timer); left = SECS; tick();
+  timer = setInterval(() => { left -= .1; tick(); if (left <= 0) { clearInterval(timer); answer(null); } }, 100);
+}
+function tick() {
+  const f = Math.max(0, left / SECS);
+  $("ringFill").style.strokeDashoffset = 113 * (1 - f);
+  $("sec").textContent = Math.ceil(Math.max(0, left));
+  $("ring").classList.toggle("low", left <= 4);
+}
+function paintStreak() { $("streak").textContent = streak >= 2 ? `🔥 ${streak}` : ""; }
+
+function answer(saysTruth) {
+  if (locked) return; locked = true; clearInterval(timer);
+  const q = round[i], ok = saysTruth === q.truth, timeout = saysTruth === null;
+  picks.push({ q, ok, timeout });
+  if (ok) { score++; streak++; bestStreak = Math.max(bestStreak, streak); buzz(30); }
+  else { streak = 0; buzz([40, 60, 40]); }
+  paintStreak(); if (ok && streak >= 2) { $("streak").classList.add("bump"); setTimeout(() => $("streak").classList.remove("bump"), 200); }
+  $("dots").children[i].className = ok ? "ok" : "no";
+  $("bMyth").disabled = $("bTruth").disabled = true;
+  if (!timeout) (saysTruth ? $("bTruth") : $("bMyth")).classList.add("picked");
+  $("card").classList.add(ok ? "ok" : "no");
+  $("verdict").textContent = (timeout ? "Time's up! " : ok ? "Correct! " : "Nope! ") + (q.truth ? "It's TRUE." : "It's a MYTH.");
+  $("verdict").className = "verdict " + (ok ? "ok" : "no");
+  $("why").textContent = q.why;
+  $("src").textContent = q.src; $("src").href = q.url;
+  $("answer").classList.add("on");
+  if (ok) burst(window.innerWidth / 2, window.innerHeight * .4, 26);
+  setTimeout(() => { $("choices").style.display = "none"; $("next").textContent = i === N - 1 ? "See my score →" : "Next →"; $("next").classList.add("on"); }, 350);
+}
+
+function next() { i++; if (i < N) render(); else finish(); }
+
+function finish() {
+  show("sResult");
+  setPhoto(round[N - 1].img);
+  const ranks = [
+    [10, "Certified Glitch Hunter 🧠", "A perfect score. Almost nobody gets here."],
+    [8, "Science Detective 🔍", "Better than most players. Can your friends beat you?"],
+    [6, "Curious Mind 🌌", "Not bad. A few myths still fooled you."],
+    [0, "Myth Magnet 🧲", "The myths got you this time. Try a new round!"],
+  ];
+  const [, r, sub] = ranks.find(([min]) => score >= min);
+  $("rank").textContent = r; $("rankSub").textContent = sub;
+  // animated ring + count-up
+  $("scoreFill").style.strokeDashoffset = 534;
+  requestAnimationFrame(() => requestAnimationFrame(() => { $("scoreFill").style.strokeDashoffset = 534 * (1 - score / N); }));
+  let c = 0; $("scoreNum").textContent = 0;
+  const up = setInterval(() => { if (c >= score) return clearInterval(up); $("scoreNum").textContent = ++c; }, 1200 / Math.max(score, 1));
+  // best score
+  const prev = parseInt(store.get("pg_best") ?? "-1", 10);
+  let msg = bestStreak >= 3 ? `🔥 Best streak: ${bestStreak}` : "";
+  if (score > prev) { store.set("pg_best", score); if (prev >= 0) msg = `🏆 New personal best!` + (msg ? ` · ${msg}` : ""); }
+  $("bestMsg").textContent = msg; paintBest();
+  if (score >= 7) setTimeout(() => confetti(), 500);
+  // review
+  $("review").innerHTML = "";
+  picks.forEach(p => {
+    const d = document.createElement("div");
+    d.innerHTML = `<b>${p.ok ? "✅" : p.timeout ? "⏱" : "❌"}</b><span></span>`;
+    d.querySelector("span").textContent = p.q.text;
+    const em = document.createElement("em"); em.textContent = p.q.truth ? "TRUE" : "MYTH"; d.querySelector("span").appendChild(em);
+    $("review").appendChild(d);
+  });
+  // share
+  const url = location.href.split("#")[0].split("?")[0];
+  const text = `I scored ${score}/10 on the PrimeGlitch "Myth or Truth?" science quiz 🧠 Can you beat me?`;
+  $("shX").href = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
+  $("shFb").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
+  $("shWa").href = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
+  $("shTg").href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  const copy = async el => { try { await navigator.clipboard.writeText(text + " " + url); el.textContent = "Copied!"; } catch (e) { el.textContent = "Copy failed"; } };
+  $("shCopy").onclick = () => { const s = $("shCopy").querySelector("span"); copy(s); setTimeout(() => s.textContent = "Copy link", 1800); };
+  $("shareMain").onclick = async () => {
+    if (navigator.share) { try { await navigator.share({ title: "Myth or Truth?", text, url }); } catch (e) {} }
+    else { copy($("shareMain")); setTimeout(() => $("shareMain").textContent = "Challenge a friend", 1800); }
+  };
+}
+
+/* ---------- swipe ---------- */
+(() => {
+  const card = $("card"); let x0 = null, dx = 0;
+  card.addEventListener("pointerdown", e => { if (locked) return; x0 = e.clientX; dx = 0; card.style.transition = "none"; card.setPointerCapture(e.pointerId); });
+  card.addEventListener("pointermove", e => {
+    if (x0 === null) return; dx = e.clientX - x0;
+    card.style.transform = `translateX(${dx}px) rotate(${dx / 18}deg)`;
+    $("stL").style.opacity = Math.min(1, Math.max(0, -dx / 90)); $("stR").style.opacity = Math.min(1, Math.max(0, dx / 90));
+  });
+  const end = () => {
+    if (x0 === null) return; x0 = null; card.style.transition = ""; card.style.transform = "";
+    $("stL").style.opacity = $("stR").style.opacity = 0;
+    if (Math.abs(dx) > 90) answer(dx > 0);
+  };
+  card.addEventListener("pointerup", end); card.addEventListener("pointercancel", end);
+})();
+document.addEventListener("keydown", e => {
+  if (!$("sQuiz").classList.contains("on")) { if (e.key === "Enter" && $("sStart").classList.contains("on")) start(); return; }
+  if (!locked && e.key === "ArrowLeft") answer(false);
+  else if (!locked && e.key === "ArrowRight") answer(true);
+  else if (locked && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); next(); }
+});
+
+/* ---------- particles ---------- */
+const fx = $("fx"), cx = fx.getContext("2d"); let parts = [], raf = null;
+function size() { fx.width = innerWidth * devicePixelRatio; fx.height = innerHeight * devicePixelRatio; cx.setTransform(devicePixelRatio, 0, 0, devicePixelRatio, 0, 0); }
+size(); addEventListener("resize", size);
+const COLS = ["#22e3f2", "#ff3fb4", "#8b5cff", "#ffd52a", "#2ee88a"];
+function burst(x, y, n, spread = 7) {
+  for (let k = 0; k < n; k++) { const a = Math.random() * Math.PI * 2, s = 2 + Math.random() * spread;
+    parts.push({ x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s - 2, life: 60 + Math.random() * 30, c: COLS[k % COLS.length], r: 2 + Math.random() * 4, rot: Math.random() * 6 }); }
+  if (!raf) loop();
+}
+function confetti() { for (let k = 0; k < 5; k++) setTimeout(() => burst(Math.random() * innerWidth, innerHeight * .25, 40, 9), k * 180); }
+function loop() {
+  cx.clearRect(0, 0, innerWidth, innerHeight);
+  parts = parts.filter(p => p.life-- > 0);
+  parts.forEach(p => { p.x += p.vx; p.y += p.vy; p.vy += .18; p.vx *= .99; p.rot += .2;
+    cx.save(); cx.globalAlpha = Math.min(1, p.life / 30); cx.fillStyle = p.c; cx.translate(p.x, p.y); cx.rotate(p.rot); cx.fillRect(-p.r, -p.r / 2, p.r * 2, p.r); cx.restore(); });
+  raf = parts.length ? requestAnimationFrame(loop) : null;
+}
+
+$("go").onclick = start; $("again").onclick = start; $("next").onclick = next;
+$("bMyth").onclick = () => answer(false); $("bTruth").onclick = () => answer(true);
+</script>
+</body>
+</html>
