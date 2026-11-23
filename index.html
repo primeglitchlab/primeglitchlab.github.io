@@ -23,7 +23,8 @@
 <link rel="icon" href="logo.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anton&family=Space+Grotesk:wght@400;500;700&display=swap"></noscript>
 <style>
   :root {
     --bg: #06060d; --glass: rgba(18, 20, 36, .58); --stroke: rgba(255, 255, 255, .10);
@@ -40,7 +41,8 @@
   .bg .photo { position: absolute; inset: -40px; background-size: cover; background-position: center; opacity: 0; transform: scale(1.1);
                transition: opacity .8s ease, transform 8s ease; filter: saturate(1.3) brightness(.55); }
   .bg .photo.on { opacity: 1; transform: scale(1.0); }
-  .blob { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(90px); opacity: .45; mix-blend-mode: screen; }
+  .blob { position: absolute; width: 60vmax; height: 60vmax; border-radius: 50%; filter: blur(90px); opacity: .45; will-change: transform; }
+  @media (max-width: 700px) { .blob { filter: blur(60px); opacity: .35; } .glass { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); } }
   .b1 { background: var(--violet); top: -25vmax; left: -15vmax; animation: drift 18s ease-in-out infinite alternate; }
   .b2 { background: var(--pink); bottom: -30vmax; right: -20vmax; animation: drift 22s ease-in-out infinite alternate-reverse; }
   .b3 { background: var(--cyan); top: 30%; left: 40%; width: 35vmax; height: 35vmax; opacity: .25; animation: drift 26s ease-in-out infinite alternate; }
@@ -365,7 +367,8 @@ const store = {
 function paintBest() { const b = store.get("pg_best"); $("pillBest").innerHTML = `Best: <b>${b === null ? "–" : b + "/10"}</b>`; }
 paintBest();
 
-Q.forEach(q => { const im = new Image(); im.src = `bg${q.img}.webp`; const p = new Image(); p.src = `p${q.img}.webp`; });   // preload backgrounds
+const warmed = new Set();
+function warm(q) { if (!q || warmed.has(q.img)) return; warmed.add(q.img); const a = new Image(); a.src = `p${q.img}.webp`; const b = new Image(); b.src = `bg${q.img}.webp`; }   // fetch one question's pictures ahead of time
 function setPhoto(name) {
   const a = $(photoFlip ? "ph1" : "ph2"), b = $(photoFlip ? "ph2" : "ph1");
   a.style.backgroundImage = `url(bg${name}.webp)`; a.classList.add("on"); b.classList.remove("on"); photoFlip = !photoFlip;
@@ -377,15 +380,18 @@ function track(name) {   // anonymous event count in GoatCounter (no cookies, no
 }
 function buzz(p) { if (navigator.vibrate && navigator.userActivation?.hasBeenActive) navigator.vibrate(p); }
 
+let nextRound = shuffle(Q.slice()).slice(0, N);
+warm(nextRound[0]);   // the first question's pictures load while the start screen is shown
 function start() {
   track(picks.length ? "quiz-replay" : "quiz-start");
-  round = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; streak = 0; bestStreak = 0; picks = [];
+  round = nextRound; nextRound = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; streak = 0; bestStreak = 0; picks = [];
   $("dots").innerHTML = "<i></i>".repeat(N);
   show("sQuiz"); render();
 }
 
 function render() {
   const q = round[i]; locked = false;
+  warm(round[i + 1]);
   setPhoto(q.img);
   const pic = $("pic"); pic.classList.remove("on"); pic.onload = () => pic.classList.add("on"); pic.src = `p${q.img}.webp`; pic.alt = q.tag;
   if (pic.complete && pic.naturalWidth) requestAnimationFrame(() => pic.classList.add("on"));
@@ -432,12 +438,14 @@ function answer(saysTruth) {
   $("src").textContent = q.src; $("src").href = q.url;
   $("answer").classList.add("on");
   if (ok) burst(window.innerWidth / 2, window.innerHeight * .4, 26);
-  setTimeout(() => { $("choices").style.display = "none"; $("next").textContent = i === N - 1 ? "See my score →" : "Next →"; $("next").classList.add("on"); }, 350);
+  const at = i;
+  setTimeout(() => { if (!locked || i !== at || !$("sQuiz").classList.contains("on")) return; $("choices").style.display = "none"; $("next").textContent = i === N - 1 ? "See my score →" : "Next →"; $("next").classList.add("on"); }, 350);
 }
 
 function next() { i++; if (i < N) render(); else finish(); }
 
 function finish() {
+  warm(nextRound[0]);
   track(`quiz-finish-score-${score}`);
   show("sResult");
   setPhoto(round[N - 1].img);
