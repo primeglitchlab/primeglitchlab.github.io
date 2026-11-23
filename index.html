@@ -181,6 +181,10 @@
   .review em { font-style: normal; color: var(--muted); font-size: 12px; display: block; }
 
   #cardBtn { margin-top: 12px; }
+  .cardview { position: fixed; inset: 0; z-index: 50; background: rgba(4, 4, 10, .94); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 18px; }
+  .cardview img { max-width: 100%; max-height: 68vh; border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.6); -webkit-touch-callout: default; user-select: auto; }
+  .cardview p { color: var(--text); text-align: center; font-size: 15px; max-width: 360px; line-height: 1.5; }
+  .cardview .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; width: 100%; max-width: 360px; }
   .lbjoin { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
   .lbjoin input { min-width: 0; background: rgba(255,255,255,.06); border: 1px solid var(--stroke); border-radius: 14px; padding: 14px; color: var(--text); font: 600 16px "Space Grotesk", sans-serif; outline: none; }
   .lbjoin input:focus { border-color: var(--cyan); }
@@ -517,7 +521,9 @@ function finish() {
     if (navigator.share) { try { await navigator.share({ title: "Myth or Truth?", text, url }); } catch (e) {} }
     else { copy($("shareMain")); setTimeout(() => $("shareMain").textContent = "Challenge a friend", 1800); }
   };
-  $("cardBtn").onclick = () => shareCard(text, r);
+  cardReady = null; cardBlob = null; cardText = text;
+  setTimeout(() => { cardReady = makeCard(r).then(b => (cardBlob = b)); }, 900);   // render while the score animates
+  $("cardBtn").onclick = () => shareCard();
   // weekly leaderboard
   const saved = store.get("pg_name") || "";
   $("lbName").value = saved; $("lbJoin").style.display = ""; $("lbSend").disabled = false;
@@ -527,7 +533,7 @@ function finish() {
   $("lbName").onkeydown = e => { if (e.key === "Enter") $("lbSend").click(); };
   $("lbSend").onclick = async () => {
     const name = $("lbName").value.trim().replace(/\s+/g, " ");
-    if (!/^[A-Za-z0-9 _.\-]{2,16}$/.test(name)) { $("lbMsg").textContent = "Use 2–16 English letters or numbers."; return; }
+    if (!/^[\p{L}\p{N} _.\-]{2,16}$/u.test(name)) { $("lbMsg").textContent = "Use 2–16 letters or numbers (no emoji or symbols)."; return; }
     $("lbSend").disabled = true; $("lbMsg").textContent = "Saving…";
     try {
       const res = await fetch(API + "/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, score, time: Math.round(totalTime * 10) / 10 }) });
@@ -604,17 +610,25 @@ async function makeCard(rankTitle) {
   x.textAlign = "left"; x.font = '700 50px "Space Grotesk", sans-serif'; x.fillStyle = "#f5f6ff"; x.fillText("PrimeGlitch", W / 2 - 80, 1222);
   return await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.9));
 }
-async function shareCard(text, rankTitle) {
-  const btn = $("cardBtn"); btn.disabled = true;
-  try {
-    const blob = await makeCard(rankTitle);
-    const file = new File([blob], "primeglitch-score.jpg", { type: "image/jpeg" });
-    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-      try { await navigator.share({ files: [file], text: text + " https://quiz.pixoraimg.com" }); return; } catch (e) { if (e.name === "AbortError") return; }
-    }
-    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "primeglitch-score.jpg";
-    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
-  } finally { btn.disabled = false; }
+let cardReady = null, cardBlob = null, cardText = "";
+function shareCard() {
+  // iPhone Safari only opens the share sheet if share() is called right inside the tap, so the image is made in advance
+  if (!cardBlob) { $("cardBtn").textContent = "Preparing card…"; (cardReady || Promise.resolve()).then(() => { $("cardBtn").textContent = "🖼 Save my score card"; }); return; }
+  const file = new File([cardBlob], "primeglitch-score.jpg", { type: "image/jpeg" });
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
+    navigator.share({ files: [file], text: cardText + " https://quiz.pixoraimg.com" }).catch(e => { if (e.name !== "AbortError") showCard(); });
+    return;
+  }
+  showCard();
+}
+function showCard() {
+  // fallback that works in every browser, incl. Instagram/Telegram in-app browsers: show the image, press and hold to save
+  const url = URL.createObjectURL(cardBlob);
+  const box = document.createElement("div"); box.className = "cardview";
+  box.innerHTML = '<img alt="My PrimeGlitch score card"><p>Press and hold the image → <b>Save</b> / <b>Add to Photos</b>, then post it to your Story.</p><div class="row2"><a class="btn cta" download="primeglitch-score.jpg">Download</a><button class="btn soft">Close</button></div>';
+  box.querySelector("img").src = url; box.querySelector("a").href = url;
+  box.querySelector("button").onclick = () => { box.remove(); URL.revokeObjectURL(url); };
+  document.body.appendChild(box);
 }
 
 
