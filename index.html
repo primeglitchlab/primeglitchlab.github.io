@@ -180,6 +180,21 @@
   .review b { flex: 0 0 auto; }
   .review em { font-style: normal; color: var(--muted); font-size: 12px; display: block; }
 
+  #cardBtn { margin-top: 12px; }
+  .lbjoin { display: grid; grid-template-columns: 1fr auto; gap: 8px; }
+  .lbjoin input { min-width: 0; background: rgba(255,255,255,.06); border: 1px solid var(--stroke); border-radius: 14px; padding: 14px; color: var(--text); font: 600 16px "Space Grotesk", sans-serif; outline: none; }
+  .lbjoin input:focus { border-color: var(--cyan); }
+  .lbjoin .btn { width: auto; padding: 14px 22px; }
+  .lbmsg { font-size: 13px; color: var(--muted); margin: 8px 0 10px; text-align: left; min-height: 18px; }
+  .lb { list-style: none; display: flex; flex-direction: column; gap: 6px; text-align: left; }
+  .lb li { display: grid; grid-template-columns: 30px 1fr auto auto; gap: 10px; align-items: center; padding: 10px 12px; border-radius: 12px; background: rgba(255,255,255,.04); border: 1px solid var(--stroke); font-size: 14px; }
+  .lb li.me { border-color: var(--cyan); box-shadow: 0 0 18px rgba(34,227,242,.25); }
+  .lb li.empty { display: block; color: var(--muted); }
+  .lb .pos { font-weight: 700; color: var(--yellow); text-align: center; }
+  .lb .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .lb .sc { font-weight: 700; } .lb .tm { color: var(--muted); font-size: 12px; }
+  .lbmini { margin-top: 20px; text-align: left; }
+  .lbmini .label { margin-top: 0; }
   footer { text-align: center; color: var(--muted); font-size: 12px; line-height: 1.6; padding-top: 6px; }
   footer a { color: var(--muted); }
   canvas#fx { position: fixed; inset: 0; z-index: 5; pointer-events: none; }
@@ -210,6 +225,7 @@
       <div class="feats"><span>⏱ 12 sec each</span><span>🔥 Streaks</span><span>📚 Real sources</span></div>
       <button class="btn cta" id="go">Start the quiz →</button>
       <p class="hint">Tip: swipe the card ← myth · truth → or use arrow keys</p>
+      <div class="lbmini" id="lbMini"></div>
     </div>
   </section>
 
@@ -262,6 +278,13 @@
         <button class="ico" id="shCopy" data-goatcounter-click="share-copy"><i class="cp"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round"><path d="M10 14a5 5 0 0 0 7 0l3-3a5 5 0 0 0-7-7l-1 1"/><path d="M14 10a5 5 0 0 0-7 0l-3 3a5 5 0 0 0 7 7l1-1"/></svg></i><span>Copy link</span></button>
       </div>
 
+      <button class="btn soft" id="cardBtn" data-goatcounter-click="share-card">🖼 Save my score card</button>
+
+      <p class="label">🏆 This week's leaderboard</p>
+      <div class="lbjoin" id="lbJoin"><input id="lbName" maxlength="16" placeholder="Your nickname" autocomplete="nickname" enterkeyhint="send"><button class="btn cta" id="lbSend">Join</button></div>
+      <p class="lbmsg" id="lbMsg"></p>
+      <ol class="lb" id="lbList"></ol>
+
       <p class="label">A new mind-blowing fact every day</p>
       <div class="stack">
         <a class="btn yt" data-goatcounter-click="follow-youtube" href="https://www.youtube.com/@PrimeGlitchLab?sub_confirmation=1" target="_blank" rel="noopener"><svg width="24" height="24" viewBox="0 0 24 24" fill="#fff"><path d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.5 3.6 12 3.6 12 3.6s-7.5 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.9.5 9.4.5 9.4.5s7.5 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6-6.3 3.6z"/></svg>Subscribe on YouTube</a>
@@ -281,7 +304,7 @@
     </div>
   </section>
 
-  <footer>Made by <a href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener">PrimeGlitch</a> · every fact is checked against the source linked under it<br>Anonymous visit counts only (GoatCounter, no cookies)<br>Photos: wombat &amp; emu by JJ Harrison (<a href="https://commons.wikimedia.org/wiki/File:Vombatus_ursinus_-Maria_Island_National_Park.jpg" target="_blank" rel="noopener">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/wiki/File:Emu_1_-_Tidbinbilla.jpg" target="_blank" rel="noopener">CC BY-SA 4.0</a>), Everest by shrimpo1967 / Papa Lima Whiskey 2 (<a href="https://commons.wikimedia.org/wiki/File:Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg" target="_blank" rel="noopener">CC BY-SA 2.0</a>), cropped; penny: U.S. Mint (public domain)</footer>
+  <footer>Made by <a href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener">PrimeGlitch</a> · every fact is checked against the source linked under it<br>Anonymous visit counts only (GoatCounter, no cookies). The weekly leaderboard stores only the nickname you type and your score, for 60 days<br>Photos: wombat &amp; emu by JJ Harrison (<a href="https://commons.wikimedia.org/wiki/File:Vombatus_ursinus_-Maria_Island_National_Park.jpg" target="_blank" rel="noopener">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/wiki/File:Emu_1_-_Tidbinbilla.jpg" target="_blank" rel="noopener">CC BY-SA 4.0</a>), Everest by shrimpo1967 / Papa Lima Whiskey 2 (<a href="https://commons.wikimedia.org/wiki/File:Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg" target="_blank" rel="noopener">CC BY-SA 2.0</a>), cropped; penny: U.S. Mint (public domain)</footer>
 </main>
 
 <script>
@@ -358,6 +381,7 @@ const Q = [
 ];
 
 const N = 10, SECS = 12, $ = id => document.getElementById(id);
+let totalTime = 0;
 let round = [], i = 0, score = 0, streak = 0, bestStreak = 0, picks = [], locked = false, timer = null, left = SECS, photoFlip = false;
 
 const store = {
@@ -384,7 +408,7 @@ let nextRound = shuffle(Q.slice()).slice(0, N);
 warm(nextRound[0]);   // the first question's pictures load while the start screen is shown
 function start() {
   track(picks.length ? "quiz-replay" : "quiz-start");
-  round = nextRound; nextRound = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; streak = 0; bestStreak = 0; picks = [];
+  round = nextRound; nextRound = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; totalTime = 0; streak = 0; bestStreak = 0; picks = [];
   $("dots").innerHTML = "<i></i>".repeat(N);
   show("sQuiz"); render();
 }
@@ -424,6 +448,7 @@ function answer(saysTruth) {
   if (locked) return; locked = true; clearInterval(timer);
   const q = round[i], ok = saysTruth === q.truth, timeout = saysTruth === null;
   picks.push({ q, ok, timeout });
+  totalTime += timeout ? SECS : Math.min(SECS, Math.max(0.1, SECS - left));
   track(`q${q.img}-${timeout ? "timeout" : ok ? "right" : "wrong"}`);
   if (ok) { score++; streak++; bestStreak = Math.max(bestStreak, streak); buzz(30); }
   else { streak = 0; buzz([40, 60, 40]); }
@@ -479,7 +504,8 @@ function finish() {
   });
   // share
   const url = location.href.split("#")[0].split("?")[0];
-  const text = `I scored ${score}/10 on the PrimeGlitch "Myth or Truth?" science quiz 🧠 Can you beat me?`;
+  const grid = picks.map(p => p.ok ? "🟩" : p.timeout ? "⬜" : "🟥").join("");
+  const text = `I scored ${score}/10 on the PrimeGlitch "Myth or Truth?" science quiz 🧠\n${grid}\nCan you beat me?`;
   $("shX").href = `https://x.com/intent/post?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   $("shFb").href = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`;
   $("shWa").href = `https://wa.me/?text=${encodeURIComponent(text + " " + url)}`;
@@ -491,7 +517,106 @@ function finish() {
     if (navigator.share) { try { await navigator.share({ title: "Myth or Truth?", text, url }); } catch (e) {} }
     else { copy($("shareMain")); setTimeout(() => $("shareMain").textContent = "Challenge a friend", 1800); }
   };
+  $("cardBtn").onclick = () => shareCard(text, r);
+  // weekly leaderboard
+  const saved = store.get("pg_name") || "";
+  $("lbName").value = saved; $("lbJoin").style.display = ""; $("lbSend").disabled = false;
+  $("lbMsg").textContent = "Top 3 nicknames each week get a shout-out in our Friday Short.";
+  $("lbList").innerHTML = "";
+  lbFetch().then(d => { if (d) lbPaint($("lbList"), d.top, saved, 10); });
+  $("lbName").onkeydown = e => { if (e.key === "Enter") $("lbSend").click(); };
+  $("lbSend").onclick = async () => {
+    const name = $("lbName").value.trim().replace(/\s+/g, " ");
+    if (!/^[A-Za-z0-9 _.\-]{2,16}$/.test(name)) { $("lbMsg").textContent = "Use 2–16 English letters or numbers."; return; }
+    $("lbSend").disabled = true; $("lbMsg").textContent = "Saving…";
+    try {
+      const res = await fetch(API + "/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, score, time: Math.round(totalTime * 10) / 10 }) });
+      const d = await res.json();
+      if (!res.ok) {
+        $("lbMsg").textContent = d.error === "name" ? "Please pick a different nickname." : d.error === "slow" ? "Too fast — wait a minute and try again." : "Couldn't save your score.";
+        $("lbSend").disabled = false; return;
+      }
+      store.set("pg_name", name); track("leaderboard-join");
+      $("lbJoin").style.display = "none";
+      $("lbMsg").textContent = `You're #${d.rank} this week! Top 3 get a shout-out in our Friday Short.`;
+      lbPaint($("lbList"), d.top, name, 10); loadMini();
+    } catch (e) { $("lbMsg").textContent = "No connection — try again."; $("lbSend").disabled = false; }
+  };
 }
+
+/* ---------- weekly leaderboard ---------- */
+const API = "https://quiz-api.pixoraimg.com";
+async function lbFetch() {
+  try { const r = await fetch(API + "/leaderboard", { cache: "no-store" }); return r.ok ? await r.json() : null; } catch (e) { return null; }
+}
+function lbPaint(el, top, me, limit) {
+  el.innerHTML = "";
+  if (!top || !top.length) { const li = document.createElement("li"); li.className = "empty"; li.textContent = "No scores yet this week — be the first!"; el.appendChild(li); return; }
+  top.slice(0, limit).forEach((e, k) => {
+    const li = document.createElement("li");
+    if (me && e.n.toLowerCase() === me.toLowerCase()) li.className = "me";
+    [["pos", ["🥇", "🥈", "🥉"][k] || String(k + 1)], ["nm", e.n], ["sc", e.s + "/10"], ["tm", e.t + "s"]].forEach(([c, t]) => {
+      const sp = document.createElement("span"); sp.className = c; sp.textContent = t; li.appendChild(sp);
+    });
+    el.appendChild(li);
+  });
+}
+async function loadMini() {
+  const d = await lbFetch();
+  const box = $("lbMini"); box.innerHTML = "";
+  if (!d || !d.top.length) return;
+  const h = document.createElement("p"); h.className = "label"; h.textContent = "🏆 This week's top players";
+  const ol = document.createElement("ol"); ol.className = "lb";
+  box.append(h, ol); lbPaint(ol, d.top, store.get("pg_name"), 3);
+}
+loadMini();
+
+/* ---------- score card image ---------- */
+async function makeCard(rankTitle) {
+  const W = 1080, H = 1350, c = document.createElement("canvas"); c.width = W; c.height = H;
+  const x = c.getContext("2d");
+  try { await Promise.all([document.fonts.load("120px Anton"), document.fonts.load('700 48px "Space Grotesk"')]); } catch (e) {}
+  const bg = x.createLinearGradient(0, 0, W, H); bg.addColorStop(0, "#1b1340"); bg.addColorStop(.5, "#06060d"); bg.addColorStop(1, "#3a0f2e");
+  x.fillStyle = bg; x.fillRect(0, 0, W, H);
+  const glow = (cx, cy, r, col) => { const g = x.createRadialGradient(cx, cy, 0, cx, cy, r); g.addColorStop(0, col); g.addColorStop(1, "rgba(0,0,0,0)"); x.fillStyle = g; x.fillRect(0, 0, W, H); };
+  glow(120, 120, 650, "rgba(139,92,255,.45)"); glow(980, 1250, 700, "rgba(255,63,180,.35)"); glow(920, 260, 420, "rgba(34,227,242,.25)");
+  const parts = [["MYTH", "120px Anton, Impact", "#ff3fb4"], [" or ", "64px Anton, Impact", "#a3a8c7"], ["TRUTH?", "120px Anton, Impact", "#22e3f2"]];
+  let tw = 0; parts.forEach(([t, f]) => { x.font = f; tw += x.measureText(t).width; });
+  let px = (W - tw) / 2; x.textBaseline = "alphabetic"; x.textAlign = "left";
+  parts.forEach(([t, f, col]) => { x.font = f; x.fillStyle = col; x.shadowColor = col; x.shadowBlur = 30; x.fillText(t, px, 230); px += x.measureText(t).width; });
+  x.shadowBlur = 0; x.textAlign = "center";
+  const sg = x.createLinearGradient(240, 0, 840, 0); sg.addColorStop(0, "#22e3f2"); sg.addColorStop(.55, "#8b5cff"); sg.addColorStop(1, "#ff3fb4");
+  x.font = "300px Anton, Impact"; x.fillStyle = sg; x.fillText(`${score}/10`, W / 2, 600);
+  x.font = '700 58px "Space Grotesk", sans-serif'; x.fillStyle = "#f5f6ff"; x.fillText(rankTitle, W / 2, 700);
+  const sz = 70, gap = 16, gx = (W - (sz * 10 + gap * 9)) / 2;
+  picks.forEach((p, k) => {
+    x.fillStyle = p.ok ? "#2ee88a" : p.timeout ? "#5b6078" : "#ff4766";
+    const bx = gx + k * (sz + gap), by = 770; x.beginPath();
+    if (x.roundRect) x.roundRect(bx, by, sz, sz, 16); else x.rect(bx, by, sz, sz);
+    x.fill();
+  });
+  x.font = "84px Anton, Impact"; x.fillStyle = "#ffd52a"; x.fillText("CAN YOU BEAT ME?", W / 2, 1000);
+  x.font = '600 46px "Space Grotesk", sans-serif'; x.fillStyle = "#f5f6ff"; x.fillText("quiz.pixoraimg.com", W / 2, 1080);
+  try {
+    const logo = await new Promise((ok, no) => { const im = new Image(); im.onload = () => ok(im); im.onerror = no; im.src = "logo.png"; });
+    x.save(); x.beginPath(); x.arc(W / 2 - 150, 1205, 50, 0, Math.PI * 2); x.clip(); x.drawImage(logo, W / 2 - 200, 1155, 100, 100); x.restore();
+  } catch (e) {}
+  x.textAlign = "left"; x.font = '700 50px "Space Grotesk", sans-serif'; x.fillStyle = "#f5f6ff"; x.fillText("PrimeGlitch", W / 2 - 80, 1222);
+  return await new Promise(ok => c.toBlob(ok, "image/jpeg", 0.9));
+}
+async function shareCard(text, rankTitle) {
+  const btn = $("cardBtn"); btn.disabled = true;
+  try {
+    const blob = await makeCard(rankTitle);
+    const file = new File([blob], "primeglitch-score.jpg", { type: "image/jpeg" });
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      try { await navigator.share({ files: [file], text: text + " https://quiz.pixoraimg.com" }); return; } catch (e) { if (e.name === "AbortError") return; }
+    }
+    const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "primeglitch-score.jpg";
+    document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+  } finally { btn.disabled = false; }
+}
+
 
 /* ---------- swipe ---------- */
 (() => {
