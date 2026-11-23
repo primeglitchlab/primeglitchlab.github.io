@@ -1,0 +1,7 @@
+Quiz pictures (pic/NN.webp)
+- Frames from our own Shorts footage (see footage/video_NN/sources.txt): 03 04 06 07 09 11 13 14 15(video_06/02) 16 18 19 32
+- 22 wombat: Wikimedia Commons, JJ Harrison, CC BY-SA 3.0 — File:Vombatus_ursinus_-Maria_Island_National_Park.jpg (1280px thumb, cropped 16:10)
+- 20 emu: Wikimedia Commons, JJ Harrison, CC BY-SA 4.0 — File:Emu_1_-_Tidbinbilla.jpg (cropped)
+- 21 Everest: Wikimedia Commons, shrimpo1967 / Papa Lima Whiskey 2, CC BY-SA 2.0 — File:Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg (cropped)
+- 25 penny: Wikimedia Commons, US Mint, public domain — File:US_One_Cent_Obv.png (on our own gradient)
+Downloaded 23 Nov 2026 with the user's approval. Credits shown in the page footer.
