@@ -183,7 +183,7 @@
   #cardBtn { margin-top: 12px; }
   .champ { margin-top: 16px; padding: 14px 16px; border-radius: 16px; text-align: left; font-size: 15px; line-height: 1.5;
            background: linear-gradient(100deg, rgba(255,213,42,.14), rgba(255,63,180,.12)); border: 1px solid rgba(255,213,42,.45); }
-  .champ span { color: var(--yellow); font-weight: 700; } .champ small { color: var(--muted); }
+  .champ span { color: var(--yellow); font-weight: 700; } .champ small { color: var(--muted); } .champ a { color: var(--cyan, #22e3f2); font-weight: 600; }
   .cardview { position: fixed; inset: 0; z-index: 50; background: rgba(4, 4, 10, .94); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 18px; }
   .cardview img { max-width: 100%; max-height: 68vh; border-radius: 18px; box-shadow: 0 20px 60px rgba(0,0,0,.6); -webkit-touch-callout: default; user-select: auto; }
   .cardview p { color: var(--text); text-align: center; font-size: 15px; max-width: 360px; line-height: 1.5; }
@@ -233,7 +233,7 @@
       <button class="btn cta" id="go">Start the quiz →</button>
       <p class="hint">Tip: swipe the card ← myth · truth → or use arrow keys</p>
       <div class="lbmini" id="lbMini"></div>
-      <div class="champ">🏆 <b>December Championship</b> — <span>$100</span> for the best score.<br><small>Free to play · no sign-up or follow needed · 18+ · official rules &amp; date announced soon</small></div>
+      <div class="champ">🏆 <b>December Championship</b> — <span>$100</span> for the best score.<br><small>Free to play · no sign-up or follow needed · 18+ · final date announced soon · <a href="rules.html">Official rules</a></small></div>
     </div>
   </section>
 
@@ -312,7 +312,7 @@
     </div>
   </section>
 
-  <footer>Made by <a href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener">PrimeGlitch</a> · every fact is checked against the source linked under it<br>Anonymous visit counts only (GoatCounter, no cookies). The weekly leaderboard stores only the nickname you type and your score, for 60 days<br>Photos: wombat &amp; emu by JJ Harrison (<a href="https://commons.wikimedia.org/wiki/File:Vombatus_ursinus_-Maria_Island_National_Park.jpg" target="_blank" rel="noopener">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/wiki/File:Emu_1_-_Tidbinbilla.jpg" target="_blank" rel="noopener">CC BY-SA 4.0</a>), Everest by shrimpo1967 / Papa Lima Whiskey 2 (<a href="https://commons.wikimedia.org/wiki/File:Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg" target="_blank" rel="noopener">CC BY-SA 2.0</a>), cropped; penny: U.S. Mint (public domain)</footer>
+  <footer>Made by <a href="https://www.youtube.com/@PrimeGlitchLab" target="_blank" rel="noopener">PrimeGlitch</a> · every fact is checked against the source linked under it<br>Anonymous visit counts only (GoatCounter, no cookies). The leaderboard stores the nickname you type, your score and answer times, plus a hashed (not raw) IP to stop cheating, for 60 days · <a href="rules.html">Official rules</a><br>Photos: wombat &amp; emu by JJ Harrison (<a href="https://commons.wikimedia.org/wiki/File:Vombatus_ursinus_-Maria_Island_National_Park.jpg" target="_blank" rel="noopener">CC BY-SA 3.0</a>, <a href="https://commons.wikimedia.org/wiki/File:Emu_1_-_Tidbinbilla.jpg" target="_blank" rel="noopener">CC BY-SA 4.0</a>), Everest by shrimpo1967 / Papa Lima Whiskey 2 (<a href="https://commons.wikimedia.org/wiki/File:Mount_Everest_as_seen_from_Drukair2_PLW_edit.jpg" target="_blank" rel="noopener">CC BY-SA 2.0</a>), cropped; penny: U.S. Mint (public domain)</footer>
 </main>
 
 <script>
@@ -412,11 +412,32 @@ function track(name) {   // anonymous event count in GoatCounter (no cookies, no
 }
 function buzz(p) { if (navigator.vibrate && navigator.userActivation?.hasBeenActive) navigator.vibrate(p); }
 
-let nextRound = shuffle(Q.slice()).slice(0, N);
-warm(nextRound[0]);   // the first question's pictures load while the start screen is shown
-function start() {
+/* ---------- server-checked rounds: the server picks the questions, times every answer and keeps the score ---------- */
+const API = "https://quiz-api.pixoraimg.com";
+const byId = Object.fromEntries(Q.map(q => [q.img, q]));
+let rid = null, chain = Promise.resolve(), starting = false;
+function send(path, body) {   // requests of one round go strictly one after another
+  const p = chain.then(() => fetch(API + path, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body), keepalive: true })
+    .then(r => r.json().then(d => Object.assign({ http: r.status }, d))).catch(() => null));
+  chain = p; return p;
+}
+function localPack() { return { rid: null, qs: shuffle(Q.slice()).slice(0, N) }; }
+function makePack() {
+  const p = fetch(API + "/round", { method: "POST", headers: { "Content-Type": "application/json" }, body: "{}" })
+    .then(r => r.ok ? r.json() : null)
+    .then(d => d && Array.isArray(d.ids) && d.ids.length === N && d.ids.every(x => byId[x]) ? { rid: d.rid, qs: d.ids.map(x => byId[x]) } : localPack())
+    .catch(() => localPack());
+  p.then(pk => warm(pk.qs[0]));   // the first question's pictures load while the start screen is shown
+  return p;
+}
+let nextPack = makePack();
+async function start() {
+  if (starting) return; starting = true;
+  const pack = await Promise.race([nextPack, new Promise(r => setTimeout(() => r(null), 3500))]) || localPack();
+  starting = false;
   track(picks.length ? "quiz-replay" : "quiz-start");
-  round = nextRound; nextRound = shuffle(Q.slice()).slice(0, N); i = 0; score = 0; totalTime = 0; streak = 0; bestStreak = 0; picks = [];
+  round = pack.qs; rid = pack.rid; chain = Promise.resolve(); nextPack = makePack();
+  i = 0; score = 0; totalTime = 0; streak = 0; bestStreak = 0; picks = [];
   $("dots").innerHTML = "<i></i>".repeat(N);
   show("sQuiz"); render();
 }
@@ -438,6 +459,7 @@ function render() {
   [$("bMyth"), $("bTruth")].forEach(b => { b.disabled = false; b.classList.remove("picked"); });
   paintStreak();
   startTimer();
+  if (rid) send("/show", { rid, i });
 }
 
 function startTimer() {
@@ -456,6 +478,7 @@ function answer(saysTruth) {
   if (locked) return; locked = true; clearInterval(timer);
   const q = round[i], ok = saysTruth === q.truth, timeout = saysTruth === null;
   picks.push({ q, ok, timeout });
+  if (rid) send("/answer", { rid, i, a: saysTruth });
   totalTime += timeout ? SECS : Math.min(SECS, Math.max(0.1, SECS - left));
   track(`q${q.img}-${timeout ? "timeout" : ok ? "right" : "wrong"}`);
   if (ok) { score++; streak++; bestStreak = Math.max(bestStreak, streak); buzz(30); }
@@ -478,7 +501,7 @@ function answer(saysTruth) {
 function next() { i++; if (i < N) render(); else finish(); }
 
 function finish() {
-  warm(nextRound[0]);
+  nextPack.then(pk => warm(pk.qs[0]));
   track(`quiz-finish-score-${score}`);
   show("sResult");
   setPhoto(round[N - 1].img);
@@ -530,8 +553,9 @@ function finish() {
   $("cardBtn").onclick = () => shareCard();
   // weekly leaderboard
   const saved = store.get("pg_name") || "";
-  $("lbName").value = saved; $("lbJoin").style.display = ""; $("lbSend").disabled = false;
-  $("lbMsg").textContent = "Top 3 nicknames each week get a shout-out in our Friday Short.";
+  $("lbName").value = saved; $("lbJoin").style.display = rid ? "" : "none"; $("lbSend").disabled = false;
+  $("lbMsg").textContent = rid ? "Top 3 nicknames each week get a shout-out in our Friday Short." : "This round was played offline, so it can't join the leaderboard. Play again online!";
+  const myRid = rid;
   $("lbList").innerHTML = "";
   lbFetch().then(d => { if (d) lbPaint($("lbList"), d.top, saved, 10); });
   $("lbName").onkeydown = e => { if (e.key === "Enter") $("lbSend").click(); };
@@ -540,22 +564,26 @@ function finish() {
     if (!/^[\p{L}\p{N} _.\-]{2,16}$/u.test(name)) { $("lbMsg").textContent = "Use 2–16 letters or numbers (no emoji or symbols)."; return; }
     $("lbSend").disabled = true; $("lbMsg").textContent = "Saving…";
     try {
-      const res = await fetch(API + "/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ name, score, time: Math.round(totalTime * 10) / 10 }) });
+      await chain;   // make sure every answer reached the server first
+      const res = await fetch(API + "/score", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ rid: myRid, name }) });
       const d = await res.json();
       if (!res.ok) {
-        $("lbMsg").textContent = d.error === "name" ? "Please pick a different nickname." : d.error === "slow" ? "Too fast — wait a minute and try again." : "Couldn't save your score.";
-        $("lbSend").disabled = false; return;
+        const m = { name: "Please pick a different nickname.", used: "This round is already on the board — play again to improve.", flag: "This round can't be ranked (answers were too fast).", round: "This round expired — play a new one.", unfinished: "Your answers didn't all reach us — play a new round." };
+        $("lbMsg").textContent = m[d.error] || "Couldn't save your score.";
+        $("lbSend").disabled = !!m[d.error] && d.error !== "name"; return;
       }
       store.set("pg_name", name); track("leaderboard-join");
+      try { const codes = JSON.parse(store.get("pg_codes") || "[]"); codes.unshift({ w: d.week, c: d.code, s: d.score, t: d.time }); store.set("pg_codes", JSON.stringify(codes.slice(0, 20))); } catch (e) {}
       $("lbJoin").style.display = "none";
-      $("lbMsg").textContent = `You're #${d.rank} this week! Top 3 get a shout-out in our Friday Short.`;
+      $("lbMsg").innerHTML = "";
+      $("lbMsg").append(`You're #${d.rank} this week with ${d.score}/10 in ${d.time}s! Top 3 get a shout-out in our Friday Short.`, document.createElement("br"));
+      const cc = document.createElement("small"); cc.textContent = `Your claim code: ${d.code} — keep it (screenshot). Winners need it to claim a prize.`; $("lbMsg").append(cc);
       lbPaint($("lbList"), d.top, name, 10); loadMini();
     } catch (e) { $("lbMsg").textContent = "No connection — try again."; $("lbSend").disabled = false; }
   };
 }
 
 /* ---------- weekly leaderboard ---------- */
-const API = "https://quiz-api.pixoraimg.com";
 async function lbFetch() {
   try { const r = await fetch(API + "/leaderboard", { cache: "no-store" }); return r.ok ? await r.json() : null; } catch (e) { return null; }
 }
